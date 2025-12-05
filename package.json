@@ -1,0 +1,44 @@
+{
+  "name": "amazonq-autoaccept",
+  "displayName": "Amazon Q Auto-Accept",
+  "description": "Automatically accept and run Amazon Q Developer commands",
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "amazonq-autoaccept.toggle",
+        "title": "Amazon Q: Toggle Auto-Accept"
+      },
+      {
+        "command": "amazonq-autoaccept.enable",
+        "title": "Amazon Q: Enable Auto-Accept"
+      },
+      {
+        "command": "amazonq-autoaccept.disable",
+        "title": "Amazon Q: Disable Auto-Accept"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "amazonq-autoaccept.toggle",
+        "key": "ctrl+shift+alt+a"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@types/vscode": "^1.80.0",
+    "typescript": "^5.0.0"
+  }
+}
