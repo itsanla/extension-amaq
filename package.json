@@ -3,11 +3,12 @@
   "displayName": "Amazon Q Auto-Accept",
   "description": "Automatically accept and run Amazon Q Developer commands",
   "version": "1.0.0",
+  "publisher": "local",
   "engines": {
     "vscode": "^1.80.0"
   },
   "categories": ["Other"],
-  "activationEvents": ["onStartupFinished"],
+  "activationEvents": ["*"],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
@@ -27,7 +28,8 @@
     "keybindings": [
       {
         "command": "amazonq-autoaccept.toggle",
-        "key": "ctrl+shift+alt+a"
+        "key": "f1+q",
+        "mac": "f1+q"
       }
     ]
   },

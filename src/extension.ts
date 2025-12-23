@@ -24,7 +24,7 @@ export function activate(context: vscode.ExtensionContext) {
 
             if (isAutoAcceptEnabled) {
                 startAutoAccept();
-                vscode.window.showInformationMessage(
+                vscode.window.showWarningMessage(
                     '⚠️ Amazon Q Auto-Accept ENABLED - All commands will be executed automatically!'
                 );
             } else {
@@ -44,7 +44,7 @@ export function activate(context: vscode.ExtensionContext) {
                 updateStatusBar();
                 startAutoAccept();
                 vscode.window.showWarningMessage(
-                    '⚠️ DANGER: Auto-Accept enabled! Commands will execute automatically.'
+                    '⚠️ Amazon Q Auto-Accept ENABLED - All commands will be executed automatically!'
                 );
             }
         }
@@ -81,14 +81,46 @@ function updateStatusBar() {
     }
 }
 
+let lastCommandTime = 0;
+let isCommandRunning = false;
+let consecutiveErrors = 0;
+const MAX_CONSECUTIVE_ERRORS = 10;
+
 function startAutoAccept() {
+    if (intervalId) return;
+    
+    consecutiveErrors = 0;
+    
     intervalId = setInterval(async () => {
+        // Prevent overlapping executions
+        if (isCommandRunning) return;
+        
+        const now = Date.now();
+        if (now - lastCommandTime < 300) return;
+        
+        // Stop if too many errors
+        if (consecutiveErrors >= MAX_CONSECUTIVE_ERRORS) {
+            vscode.window.showErrorMessage(
+                'Amazon Q Auto-Accept: Too many errors, stopping. Toggle to restart.'
+            );
+            stopAutoAccept();
+            isAutoAcceptEnabled = false;
+            updateStatusBar();
+            return;
+        }
+        
+        isCommandRunning = true;
+        lastCommandTime = now;
+        
         try {
             await vscode.commands.executeCommand('aws.amazonq.runCmdExecution');
+            consecutiveErrors = 0; // Reset on success
         } catch (error) {
-            // Silently ignore errors
+            consecutiveErrors++;
+        } finally {
+            isCommandRunning = false;
         }
-    }, 500);
+    }, 300);
 }
 
 function stopAutoAccept() {
@@ -96,6 +128,9 @@ function stopAutoAccept() {
         clearInterval(intervalId);
         intervalId = undefined;
     }
+    isCommandRunning = false;
+    consecutiveErrors = 0;
+    lastCommandTime = 0;
 }
 
 export function deactivate() {
@@ -103,4 +138,7 @@ export function deactivate() {
     if (statusBarItem) {
         statusBarItem.dispose();
     }
+    // Force cleanup
+    isAutoAcceptEnabled = false;
+    intervalId = undefined;
 }
