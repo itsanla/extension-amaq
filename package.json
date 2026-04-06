@@ -2,8 +2,9 @@
   "name": "amazonq-autoaccept",
   "displayName": "Amazon Q Auto-Accept",
   "description": "Automatically accept and run Amazon Q Developer commands",
-  "version": "1.0.0",
-  "publisher": "local",
+  "icon": "icon.png",
+  "version": "2.0.3",
+  "publisher": "itsanla",
   "engines": {
     "vscode": "^1.80.0"
   },
